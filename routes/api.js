@@ -151,4 +151,12 @@ router.post('/login', function (req, res) {
 });
 
 
+// logout
+router.get('/logout', function (req, res) {
+	req.session.destroy(function () {
+		return res.send(401, 'User logged out');
+	});
+});
+
+
 module.exports = router;
