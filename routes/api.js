@@ -26,7 +26,7 @@ router.get('/pages', function (req, res) {
 
 
 // POST a new page
-router.post('/pages/add', function (req, res) {
+router.post('/pages/add', sessionCheck, function (req, res) {
 	var page = new Page({
 		title: req.body.title,
 		url: req.body.url,
@@ -44,7 +44,7 @@ router.post('/pages/add', function (req, res) {
 });
 
 // Update a page
-router.post('/pages/update', function (req, res) {
+router.post('/pages/update', sessionCheck, function (req, res) {
 	var id = request.body._id;
 
 	Page.update({
@@ -64,7 +64,7 @@ router.post('/pages/update', function (req, res) {
 
 
 // Delete a page
-router.get('/pages/delete/:id', function (req, res) {
+router.get('/pages/delete/:id', sessionCheck, function (req, res) {
 	var id = req.params.id;
 	Page.remove({
 		_id: id
@@ -77,7 +77,7 @@ router.get('/pages/delete/:id', function (req, res) {
 
 
 // Get a single page by id
-router.get('pages/admin-details/:id', function (req, res) {
+router.get('pages/page/:id', sessionCheck, function (req, res) {
 	var id = request.params.id;
 	Page.findOne({
 		_id: id
@@ -157,6 +157,15 @@ router.get('/logout', function (req, res) {
 		return res.send(401, 'User logged out');
 	});
 });
+
+
+
+
+function sessionCheck(req, res, next) {
+	if (req.session.user) next();
+
+	else response.send(401, 'authorization failed');
+}
 
 
 module.exports = router;
