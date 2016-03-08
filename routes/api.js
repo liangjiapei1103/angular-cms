@@ -3,6 +3,7 @@ var router= express.Router();
 var mongoose = require('mongoose');
 var Page = require('../models/page');
 var User = require('../models/user');
+var bcrypt = require('bcrypt-nodejs');
 
 
 /* User Routes. */
@@ -99,6 +100,53 @@ router.get('/pages/details/:url', function (req, res) {
 			return console.log(err);
 
 		return res.send(page);
+	});
+});
+
+
+// Add a new User
+router.post('/add-user', function (req, res) {
+	var salt, hash, password;
+	password = req.body.password;
+	salt = bcrypt.genSaltSync(10);
+	hash = bcrypt.hashSync(password, salt);
+
+	var newUser = new User({
+		username: req.body.username,
+		password: hash
+	});
+
+	newUser.save(function (err) {
+		if (!err)
+			return res.send('New User successfully created');
+		else
+			return res.send(err);
+	});
+});
+
+
+// login
+router.post('/login', function (req, res) {
+	var username = req.body.username;
+	var password = req.body.password;
+
+	User.findOne({
+		username: username
+	}, function (err, data) {
+		if (err | data === null) {
+			return res.send(401, "User Doesn't exist");
+		} else {
+			var user = data;
+
+			if (username == user.username && bcrypt.compareSync(password, user.password)) {
+				req.session.regenerate(function () {
+					req.session.user = username;
+					return res.send(username);
+				});
+			} else {
+				return response.send(401, "Bad Username or Password");
+			}
+		}
 	});
 });
 
