@@ -7,12 +7,13 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var api = require('./routes/api');
 
 var mongoose = require('mongoose');
 var db = require('./config/db');
 mongoose.connect(db.url);
 
-var api = require('./routes/api.js');
+
 
 var session = require('express-session');
 
@@ -30,10 +31,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser('secret')); // Securing damin section
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-app.use('/', routes);
-app.use('/users', users);
 app.use('/api', api);
+app.use('/users', users);
+app.use('/', routes);
+
 
 app.use(session());
 
