@@ -17,6 +17,6 @@ angular.module('myApp.controllers', [])
   		pagesFactory.deletePage(id);
   	};
 
-  }])
+  }]);
 
 }]);
